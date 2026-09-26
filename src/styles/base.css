@@ -1,0 +1,164 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  border-color: var(--color-border);
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-color) transparent;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+html {
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: var(--tracking-normal);
+  font-synthesis-weight: none;
+  font-family: var(--font-sans);
+  font-size: 16px;
+}
+
+body {
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-weight: var(--font-ui-weight);
+  font-size: var(--text-base);
+  background: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  appearance: none;
+  box-shadow: none;
+  filter: none;
+  outline: 0;
+}
+
+button {
+  cursor: var(--cursor-interaction, default);
+}
+
+textarea,
+input {
+  cursor: text;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+svg {
+  display: block;
+  flex-shrink: 0;
+}
+
+::placeholder {
+  color: var(--color-text-tertiary);
+  opacity: 1;
+}
+
+::selection {
+  background-color: var(--color-background-text-selection);
+  color: var(--color-text);
+}
+
+[data-pointer-cursors="true"] button,
+[data-pointer-cursors="true"] [role="button"],
+[data-pointer-cursors="true"] [role="menuitem"],
+[data-pointer-cursors="true"] [role="option"],
+[data-pointer-cursors="true"] [role="tab"],
+[data-pointer-cursors="true"] summary,
+[data-pointer-cursors="true"] a {
+  cursor: pointer;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-stable {
+  scrollbar-gutter: stable;
+}
+
+.scrollbar-on-hover {
+  transition: scrollbar-color var(--transition-duration-basic) ease;
+  scrollbar-color: transparent transparent !important;
+}
+.scrollbar-on-hover:hover {
+  scrollbar-color: var(--color-token-scrollbar-slider-hover-background) transparent !important;
+}
+
+.selectable {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 2px;
+}
+
+.focus-ring-inset:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: -2px;
+}
+
+.text-size-chat {
+  font-size: var(--codex-chat-font-size);
+}
+
+.text-size-chat-sm {
+  font-size: calc(var(--codex-chat-font-size) - 1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

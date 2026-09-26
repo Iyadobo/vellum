@@ -1,0 +1,26 @@
+/* Brutalist Mono — Fast-Start Design Systems §B
+   JetBrains Mono for both display and body. SIL Open Font License. */
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("./jetbrains-mono-latin-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("./jetbrains-mono-latin-500-normal.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("./jetbrains-mono-latin-700-normal.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Usage: --font-display: "JetBrains Mono"; --font-body: "JetBrains Mono"; */

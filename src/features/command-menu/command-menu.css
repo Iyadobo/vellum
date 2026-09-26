@@ -1,0 +1,136 @@
+.cm-catcher {
+  position: fixed;
+  inset: 0;
+  z-index: 1265;
+}
+
+.cm-panel {
+  position: fixed;
+  top: 22vh;
+  z-index: 1266;
+  width: 640px;
+  max-width: calc(100vw - 24px);
+  max-height: min(560px, calc(100vh - 200px));
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface-elevated-secondary);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-xl-spread);
+  overflow: hidden;
+  animation: cm-panel-in 0.12s var(--ease-enter);
+}
+
+@keyframes cm-panel-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.cm-search {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 14px 16px;
+  border-bottom: var(--border-width-hairline) solid var(--color-border);
+}
+
+.cm-search:focus-within {
+  border-bottom-color: var(--color-border-strong);
+}
+
+.cm-input {
+  width: 100%;
+  min-width: 0;
+  font-size: var(--text-base);
+  color: var(--color-text);
+}
+
+.cm-results {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 6px 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cm-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cm-group + .cm-group {
+  margin-top: 8px;
+}
+
+.cm-group-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 28px;
+  padding: 0 10px;
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+}
+
+.cm-group-hint {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+}
+
+.cm-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 36px;
+  flex-shrink: 0;
+  padding: 0 10px;
+  border-radius: var(--radius-lg);
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  text-align: left;
+}
+
+.cm-row[data-selected="true"] {
+  background: var(--color-background-secondary-soft-alpha);
+}
+
+.cm-row:active {
+  background: var(--color-background-primary-ghost-hover);
+}
+
+.cm-row-icon {
+  color: var(--color-text-secondary);
+}
+
+.cm-row-title {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.cm-row-meta {
+  flex-shrink: 0;
+  max-width: 180px;
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+}
+
+.cm-row-shortcut {
+  flex-shrink: 0;
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+}
+
+.cm-empty {
+  padding: 28px;
+  text-align: center;
+  font-size: var(--text-sm);
+  color: var(--color-text-tertiary);
+}

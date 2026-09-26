@@ -1,0 +1,211 @@
+.shell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background: var(--gray-0);
+  overflow: hidden;
+}
+
+.shell-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+
+.shell-surface {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  overflow: hidden;
+}
+
+.shell-sidebar-slot {
+  display: flex;
+  min-width: 0;
+  flex-shrink: 0;
+  background: var(--sidebar-background);
+}
+
+.shell-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  border-left: var(--border-width-hairline) solid var(--color-border);
+  position: relative;
+}
+
+.shell-panel-slot {
+  display: flex;
+  min-width: 0;
+  flex-shrink: 0;
+  border-left: var(--border-width-hairline) solid var(--color-border);
+}
+
+.shell-resize-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  cursor: col-resize;
+  z-index: 60;
+  background: transparent;
+}
+
+.shell-resize-handle[data-side="left"] {
+  left: -3px;
+}
+
+.shell-resize-handle[data-side="right"] {
+  right: -3px;
+}
+
+.shell-toasts {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 1300;
+  pointer-events: none;
+}
+
+@media not all and (min-width: 768px) {
+  .shell-sidebar-slot {
+    display: none;
+  }
+  .shell-surface {
+    margin-left: 0;
+  }
+}
+
+.shell-toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 40px;
+  padding: 0 14px;
+  border-radius: var(--radius-xl);
+  background: var(--color-surface-elevated-secondary);
+  box-shadow: var(--shadow-xl-spread);
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  pointer-events: auto;
+  animation: shell-toast-in 0.18s var(--ease-enter);
+}
+
+.shell-toast button {
+  color: var(--color-text-secondary);
+  height: 24px;
+  padding: 0 6px;
+  border-radius: var(--radius-md);
+}
+
+.shell-toast button:hover {
+  background: var(--color-background-primary-ghost-hover);
+  color: var(--color-text);
+}
+
+@keyframes shell-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.shell-dialog-scrim {
+  position: fixed;
+  inset: 0;
+  background: color-mix(in srgb, var(--black) 40%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+}
+
+.shell-dialog {
+  width: 400px;
+  border-radius: var(--radius-2xl);
+  background: var(--color-surface-elevated-secondary);
+  box-shadow: var(--shadow-xl-spread);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.shell-dialog h2 {
+  font-size: var(--text-heading-sm);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.02em;
+}
+
+.shell-dialog p {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-relaxed);
+}
+
+.shell-dialog input {
+  height: 36px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-background-primary-soft-alpha);
+  padding: 0 12px;
+  font-size: var(--text-sm);
+  color: var(--color-text);
+}
+
+.shell-dialog input:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: -1px;
+}
+
+.shell-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.shell-btn {
+  height: 32px;
+  padding: 0 14px;
+  border-radius: var(--radius-lg);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+.shell-btn:hover {
+  background: var(--color-background-primary-ghost-hover);
+}
+
+.shell-btn[data-variant="primary"] {
+  background: var(--color-background-primary-solid);
+  color: var(--color-text-inverse);
+  border-color: transparent;
+}
+
+.shell-btn[data-variant="primary"]:hover {
+  background: color-mix(in srgb, var(--color-background-primary-solid) 85%, transparent);
+}
+
+.shell-btn[data-variant="danger"] {
+  background: var(--red-500);
+  border-color: transparent;
+  color: #fff;
+}
+
+.shell-btn[data-variant="danger"]:hover {
+  background: var(--red-400);
+}

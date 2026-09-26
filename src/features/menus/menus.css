@@ -1,0 +1,124 @@
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.menu-surface {
+  position: fixed;
+  z-index: 1400;
+  background: var(--menu-background-color, var(--color-surface-elevated-secondary));
+  border-radius: var(--radius-xl);
+  corner-shape: var(--codex-corner-shape, round);
+  box-shadow: var(--shadow-xl-spread);
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  max-height: min(70vh, 480px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  transform-origin: top left;
+  animation: menu-in 120ms var(--ease-out);
+}
+
+.menu-surface[data-flip="true"] {
+  transform-origin: bottom left;
+}
+
+:root[data-reduced-motion="true"] .menu-surface {
+  animation: none;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 36px;
+  width: 100%;
+  padding: 0 10px;
+  border-radius: var(--radius-lg);
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  text-align: left;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.menu-item:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: -2px;
+}
+
+.menu-item:hover:not(:disabled),
+.menu-item[data-focused="true"]:not(:disabled) {
+  background: var(--color-codex-application-menu-selection);
+}
+
+.menu-item:disabled {
+  color: var(--color-text-disabled);
+}
+
+.menu-item[data-danger="true"] {
+  color: var(--color-text-danger);
+}
+
+.menu-item[data-danger="true"]:hover:not(:disabled),
+.menu-item[data-danger="true"][data-focused="true"]:not(:disabled) {
+  background: color-mix(in oklab, var(--color-text-danger) 14%, transparent);
+}
+
+.menu-item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  color: var(--app-color-icon-secondary);
+  flex-shrink: 0;
+}
+
+.menu-item[data-danger="true"] .menu-item-icon {
+  color: inherit;
+}
+
+.menu-item-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.menu-item-shortcut {
+  color: var(--color-text-tertiary);
+  font-size: var(--text-xs);
+  flex-shrink: 0;
+}
+
+.menu-item-check {
+  display: flex;
+  align-items: center;
+  color: var(--color-text);
+  flex-shrink: 0;
+}
+
+.menu-separator {
+  height: 1px;
+  margin: 4px 8px;
+  background: var(--color-border-subtle);
+  flex-shrink: 0;
+}
+
+.menu-item-separator {
+  position: absolute;
+  top: -3px;
+  left: 8px;
+  right: 8px;
+  height: 1px;
+  background: var(--color-border-subtle);
+}
