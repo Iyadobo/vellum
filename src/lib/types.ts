@@ -2,7 +2,7 @@ import type { IconName } from "../components/Icon";
 
 export type PermissionMode = "ask" | "approve" | "full" | "custom";
 export type RunMode = "local" | "worktree" | "cloud";
-export type Effort = "low" | "medium" | "high" | "extra high";
+export type Effort = "off" | "low" | "medium" | "high" | "extra high";
 export type ThemeSetting = "dark" | "light" | "vellum" | "bw" | "midnight" | "system";
 
 export interface DiffLine {
@@ -224,4 +224,4 @@ export interface RouterProbeResult {
   modelCount: number;
 }
 
-export const EFFORTS: Effort[] = ["low", "medium", "high", "extra high"];
+export const EFFORTS: Effort[] = ["off", "low", "medium", "high", "extra high"];

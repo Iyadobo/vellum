@@ -568,7 +568,7 @@ function ProvidersPane() {
                 <span className="settings-provider-status" data-ok={status ? status.ok : undefined}>
                   {status
                     ? status.ok
-                      ? `${status.modelCount} models`
+                      ? `${status.modelCount} model${status.modelCount === 1 ? "" : "s"}`
                       : status.error ?? "unavailable"
                     : provider.enabled
                       ? "not fetched"

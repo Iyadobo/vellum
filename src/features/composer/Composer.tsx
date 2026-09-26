@@ -9,8 +9,9 @@ import {
 } from "react";
 import { Icon } from "../../components/Icon";
 import { useActions, useApp } from "../../lib/store";
-import { EFFORTS, type Effort, type PermissionMode, type RunMode } from "../../lib/types";
+import { type Effort, type PermissionMode, type RunMode } from "../../lib/types";
 import { ModelPicker } from "./ModelPicker";
+import { EffortPicker } from "./EffortPicker";
 import { useMenu, type MenuAnchor, type MenuItem } from "../menus/menus";
 import "./composer.css";
 
@@ -46,13 +47,6 @@ const PERMISSION_OPTIONS: { mode: PermissionMode; label: string; description: st
     description: "Uses permissions defined in config.toml",
   },
 ];
-
-const EFFORT_LABELS: Record<Effort, string> = {
-  low: "Low",
-  medium: "Medium",
-  high: "High",
-  "extra high": "Extra high",
-};
 
 interface ComposerSettings {
   mode: RunMode;
@@ -211,24 +205,6 @@ function ComposerSurface({ threadId }: { threadId: string }): JSX.Element {
     menu.open({ title: "Permissions", items, anchor: anchorAbove(event.currentTarget, "left", 580) });
   };
 
-  const openEffortMenu = (event: MouseEvent<HTMLButtonElement>) => {
-    const items: MenuItem[] = [
-      { id: "effort-title", label: "Reasoning effort", disabled: true },
-      ...EFFORTS.map(
-        (effort): MenuItem => ({
-          id: `effort-${effort}`,
-          label: EFFORT_LABELS[effort],
-          checked: settings.effort === effort,
-          onSelect: () => {
-            actions.setThreadModel(threadId, settings.model, effort);
-            rememberDraftSettings({ ...settings, effort });
-          },
-        }),
-      ),
-    ];
-    menu.open({ title: "Reasoning effort", items, anchor: anchorAbove(event.currentTarget, "right", 220) });
-  };
-
   return (
     <div className="composer">
       {thread.queued.length > 0 && (
@@ -295,16 +271,14 @@ function ComposerSurface({ threadId }: { threadId: string }): JSX.Element {
               rememberDraftSettings({ ...settings, model: id });
             }}
           />
-          <button
-            type="button"
-            className="composer-chip focus-ring"
-            aria-haspopup="menu"
-            aria-label={`Reasoning effort: ${EFFORT_LABELS[settings.effort]}`}
-            onClick={openEffortMenu}
-          >
-            <span className="composer-chip-label">{EFFORT_LABELS[settings.effort]}</span>
-            <Icon name="chevron-down" size={12} className="composer-chip-chevron" />
-          </button>
+          <EffortPicker
+            current={settings.effort}
+            model={settings.model}
+            onSelect={(effort) => {
+              actions.setThreadModel(threadId, settings.model, effort);
+              rememberDraftSettings({ ...settings, effort });
+            }}
+          />
           {running ? (
             <button
               type="button"

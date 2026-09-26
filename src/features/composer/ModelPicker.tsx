@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useActions, useApp } from "../../lib/store";
-import { contextLabel, freeLabel, paramsLabel } from "../../lib/router";
+import { contextLabel, paramsLabel } from "../../lib/router";
 import { harnessAvailable } from "../../lib/harness";
 import type { RouterModel } from "../../lib/types";
 import { Icon } from "../../components/Icon";
@@ -11,25 +11,34 @@ const MAX_PER_PROVIDER = 40;
 function modelChips(model: RouterModel) {
   return (
     <span className="mp-chips">
-      <span className="mp-chip" data-tone={model.vision === true ? "on" : "off"} title={model.vision === null ? "Vision support unknown" : model.vision ? "Vision capable" : "Text only"}>
-        <Icon name={model.vision === true ? "eye" : "eye-off"} size={11} />
-        {model.vision === null ? "vision unchecked" : model.vision ? "vision" : "no vision"}
-      </span>
-      <span className="mp-chip" title={model.contextWindow === null ? "Context window unknown" : `${model.contextWindow.toLocaleString()} tokens`}>
-        {contextLabel(model)}
-      </span>
-      <span className="mp-chip" title={model.paramsBillions === null ? "Parameter count unknown" : `${model.paramsBillions}B parameters`}>
-        {paramsLabel(model)}
-      </span>
+      {model.vision === true ? (
+        <span className="mp-chip" data-tone="on" title="Vision capable">
+          <Icon name="eye" size={11} />
+          vision
+        </span>
+      ) : null}
+      {model.vision === false ? (
+        <span className="mp-chip" data-tone="off" title="Text only">
+          <Icon name="eye-off" size={11} />
+          no vision
+        </span>
+      ) : null}
       {model.reasoning === true ? (
         <span className="mp-chip" data-tone="on" title="Exposes a reasoning stream">
           <Icon name="sparkles" size={11} />
           reasoning
         </span>
       ) : null}
-      <span className="mp-chip" data-tone={model.free === true ? "on" : undefined}>
-        {freeLabel(model)}
-      </span>
+      {model.contextWindow !== null ? (
+        <span className="mp-chip" title={`${model.contextWindow.toLocaleString()} tokens`}>
+          {contextLabel(model)}
+        </span>
+      ) : null}
+      {model.paramsBillions !== null ? (
+        <span className="mp-chip" title={`${model.paramsBillions}B parameters`}>
+          {paramsLabel(model)}
+        </span>
+      ) : null}
     </span>
   );
 }
@@ -179,6 +188,14 @@ export function ModelPicker({ current, onSelect }: { current: string; onSelect: 
                   <span className="mp-chip">your Codex login</span>
                 </span>
               </button>
+            ) : null}
+            {!query ? (
+              <div className="mp-banner">
+                <span className="mp-banner-title">Free models</span>
+                <span className="mp-banner-sub">
+                  Every model below runs on a free tier. Vellum 5 falls back across them automatically.
+                </span>
+              </div>
             ) : null}
             {groups.map((group) => (
               <div key={group.id} className="mp-group">

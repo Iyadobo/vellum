@@ -213,10 +213,9 @@ function engineReducer(state: VellumState, event: EngineEvent): VellumState {
       return patchThread(state, event.threadId, (t) => ({ ...t, messages: [...t.messages, message] }));
     }
     case "router-start": {
-      const label = `Vellum 5 → ${event.providerLabel} · ${event.model}`;
       return patchMessage(state, event.threadId, event.messageId, (m) => ({
         ...m,
-        blocks: [...m.blocks, { id: uid("b"), kind: "status", icon: "sparkles", label, tone: "default" } as Block],
+        blocks: [...m.blocks, { id: uid("b"), kind: "status", icon: "sparkles", label: event.label, tone: "default" } as Block],
       }));
     }
     case "router-switch": {

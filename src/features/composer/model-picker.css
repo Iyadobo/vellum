@@ -53,7 +53,8 @@
 }
 
 .mp-name {
-  font-size: var(--text-sm);
+  font-size: 13.5px;
+  font-weight: var(--font-weight-medium);
   color: var(--color-text);
 }
 
@@ -70,20 +71,43 @@
   height: 16px;
   padding: 0 6px;
   border-radius: var(--radius-full);
-  border: var(--border-width-hairline) solid var(--color-border);
+  border: var(--border-width-hairline) solid color-mix(in srgb, var(--color-text) 20%, transparent);
   font-size: 10px;
   letter-spacing: 0.02em;
-  color: var(--color-text-tertiary);
+  color: color-mix(in srgb, var(--color-text) 72%, transparent);
   white-space: nowrap;
 }
 
 .mp-chip[data-tone="on"] {
-  color: var(--color-text-secondary);
-  border-color: var(--color-border-strong);
+  color: var(--color-text);
+  border-color: color-mix(in srgb, var(--color-text) 40%, transparent);
 }
 
 .mp-chip[data-tone="off"] {
-  opacity: 0.75;
+  opacity: 0.8;
+}
+
+.mp-banner {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 12px 10px;
+  border-bottom: var(--border-width-hairline) solid var(--color-border-subtle);
+  margin-bottom: 4px;
+}
+
+.mp-banner-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 21px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-text);
+}
+
+.mp-banner-sub {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
 }
 
 .mp-group {

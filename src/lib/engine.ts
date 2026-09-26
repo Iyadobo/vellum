@@ -14,7 +14,7 @@ export type EngineEvent =
   | { type: "steer-append"; threadId: string; messageId: string; markdown: string }
   | { type: "message-end"; threadId: string; messageId: string }
   | { type: "queue-pop"; threadId: string }
-  | { type: "router-start"; threadId: string; messageId: string; provider: string; providerLabel: string; model: string }
+  | { type: "router-start"; threadId: string; messageId: string; provider: string; providerLabel: string; model: string; label: string }
   | { type: "router-switch"; threadId: string; messageId: string; toProvider: string; toModel: string; reason: string };
 
 export interface EngineBridge {
@@ -212,6 +212,7 @@ function startLiveRun(bridge: EngineBridge, thread: Thread, prompt: string): Run
   listenRouterChat(requestId, (event) => {
     if (cancelled) return;
     if (event.type === "start") {
+      const prefix = thread.model === "vellum-5" ? "Vellum 5 → " : "";
       bridge.dispatchEvent({
         type: "router-start",
         threadId: thread.id,
@@ -219,6 +220,7 @@ function startLiveRun(bridge: EngineBridge, thread: Thread, prompt: string): Run
         provider: event.provider ?? "unknown",
         providerLabel: event.providerLabel ?? event.provider ?? "unknown",
         model: event.model ?? "",
+        label: `${prefix}${event.providerLabel ?? event.provider ?? "unknown"} · ${event.model ?? ""}`,
       });
       return;
     }
@@ -299,7 +301,9 @@ function startLiveRun(bridge: EngineBridge, thread: Thread, prompt: string): Run
     try {
       const history = buildHistory(thread, prompt);
       const pinned = thread.model === "vellum-5" ? null : thread.model;
-      await startRouterChat(requestId, history, pinned, true);
+      const effort = pinned ? thread.effort : "auto";
+      const reasoning = pinned ? thread.effort !== "off" : true;
+      await startRouterChat(requestId, history, pinned, reasoning, effort);
     } catch (error) {
       if (cancelled) return;
       bridge.dispatchEvent({

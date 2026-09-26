@@ -829,9 +829,12 @@
   --app-color-background-elevated-secondary: color-mix(in oklab, #ffffff 6%, transparent);
   --app-color-background-elevated-secondary-opaque: #1c1c1c;
   --app-color-text-foreground: #f2f2f2;
-  --app-color-border: color-mix(in oklab, #ffffff 10%, transparent);
-  --app-color-border-heavy: color-mix(in oklab, #ffffff 18%, transparent);
-  --app-color-border-light: color-mix(in oklab, #ffffff 6%, transparent);
+  --color-text-secondary: color-mix(in srgb, #f2f2f2 80%, transparent);
+  --color-text-tertiary: color-mix(in srgb, #f2f2f2 62%, transparent);
+  --color-codex-description: color-mix(in srgb, #f2f2f2 78%, transparent);
+  --app-color-border: color-mix(in oklab, #ffffff 15%, transparent);
+  --app-color-border-heavy: color-mix(in oklab, #ffffff 26%, transparent);
+  --app-color-border-light: color-mix(in oklab, #ffffff 8%, transparent);
   --app-color-border-focus: color-mix(in oklab, #ffffff 70%, transparent);
   --app-color-text-accent: #ffffff;
   --app-color-background-button-secondary-hover: color-mix(in oklab, #ffffff 9%, transparent);

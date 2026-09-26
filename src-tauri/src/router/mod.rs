@@ -85,6 +85,7 @@ pub fn router_chat_start(
     messages: Vec<chat::ChatMessage>,
     model: Option<String>,
     reasoning: Option<bool>,
+    effort: Option<String>,
 ) -> Result<(), String> {
     let cancel = Arc::new(AtomicBool::new(false));
     state
@@ -95,7 +96,7 @@ pub fn router_chat_start(
     let app2 = app.clone();
     let rid = request_id.clone();
     tauri::async_runtime::spawn(async move {
-        let outcome = chat::run(app2.clone(), rid.clone(), messages, model, reasoning, cancel.clone()).await;
+        let outcome = chat::run(app2.clone(), rid.clone(), messages, model, reasoning, effort, cancel.clone()).await;
         if let Err(message) = outcome {
             chat::emit(&app2, &rid, serde_json::json!({ "type": "error", "message": message }));
         }

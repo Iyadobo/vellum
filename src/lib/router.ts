@@ -50,8 +50,9 @@ export async function startRouterChat(
   messages: ChatMessage[],
   model: string | null,
   reasoning: boolean,
+  effort: string,
 ): Promise<void> {
-  return invoke("router_chat_start", { requestId, messages, model, reasoning });
+  return invoke("router_chat_start", { requestId, messages, model, reasoning, effort });
 }
 
 export async function cancelRouterChat(requestId: string): Promise<void> {

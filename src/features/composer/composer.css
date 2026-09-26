@@ -16,6 +16,7 @@
   max-width: var(--thread-body-max-width);
   min-height: var(--min-height-composer);
   background: var(--color-surface-elevated);
+  border: 1px solid color-mix(in srgb, var(--color-text) 15%, transparent);
   border-radius: var(--composer-radius);
   corner-shape: var(--codex-corner-shape, round);
   box-shadow: var(--elevation-composer), var(--elevation-composer-dark);
@@ -47,7 +48,7 @@
 }
 
 .composer-input::placeholder {
-  color: var(--color-text-tertiary);
+  color: color-mix(in srgb, var(--color-text) 48%, transparent);
 }
 
 .composer-queue {

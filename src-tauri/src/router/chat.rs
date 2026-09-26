@@ -19,19 +19,39 @@ pub fn emit(app: &AppHandle, request_id: &str, value: Value) {
     let _ = app.emit(&format!("router://{}", request_id), value);
 }
 
-fn provider_reasoning_flag(provider: &str) -> Option<Value> {
+fn map_effort(effort: &str) -> &'static str {
+    match effort {
+        "low" => "low",
+        "medium" => "medium",
+        "extra high" => "high",
+        _ => "high",
+    }
+}
+
+fn effort_payload(provider: &str, effort: &str) -> Option<Value> {
     match provider {
-        "openrouter" => Some(json!({ "reasoning": true })),
-        "zai" => Some(json!({ "thinking": { "type": "enabled" } })),
-        "groq" => Some(json!({ "reasoning_effort": "medium" })),
+        "openrouter" => match effort {
+            "off" => Some(json!({ "reasoning": { "enabled": false } })),
+            "auto" => Some(json!({ "reasoning": { "enabled": true } })),
+            e => Some(json!({ "reasoning": { "effort": map_effort(e) } })),
+        },
+        "groq" | "google" | "opencode-zen" => match effort {
+            "off" => Some(json!({ "reasoning_effort": "none" })),
+            "auto" => Some(json!({ "reasoning_effort": "medium" })),
+            e => Some(json!({ "reasoning_effort": map_effort(e) })),
+        },
+        "zai" => match effort {
+            "off" => None,
+            _ => Some(json!({ "thinking": { "type": "enabled" } })),
+        },
         _ => None,
     }
 }
 
-fn build_body(model: &str, messages: &[ChatMessage], provider: &str, reasoning: bool, stream: bool) -> Value {
+fn build_body(model: &str, messages: &[ChatMessage], provider: &str, reasoning: bool, effort: &str, stream: bool) -> Value {
     let mut body = json!({ "model": model, "messages": messages, "stream": stream });
     if reasoning {
-        if let Some(flag) = provider_reasoning_flag(provider) {
+        if let Some(flag) = effort_payload(provider, effort) {
             if let (Some(obj), Some(extra)) = (body.as_object_mut(), flag.as_object()) {
                 for (k, v) in extra {
                     obj.insert(k.clone(), v.clone());
@@ -84,6 +104,7 @@ async fn attempt(
     cand: &RouterModel,
     messages: &[ChatMessage],
     reasoning: Option<bool>,
+    effort: &str,
     cancel: &Arc<AtomicBool>,
     base: &str,
     key: Option<String>,
@@ -98,7 +119,8 @@ async fn attempt(
             &cand.model,
             messages,
             &cand.provider,
-            if use_flag && !buffered { reasoning.unwrap_or(false) } else { false },
+            if use_flag { reasoning.unwrap_or(false) } else { false },
+            effort,
             !buffered,
         );
         let url = format!("{}/chat/completions", base.trim_end_matches('/'));
@@ -282,11 +304,13 @@ pub async fn run(
     messages: Vec<ChatMessage>,
     pinned: Option<String>,
     reasoning: Option<bool>,
+    effort: Option<String>,
     cancel: Arc<AtomicBool>,
 ) -> Result<(), String> {
     let started = Instant::now();
     let cfg = config::load(&app);
     let mut persist = config::load_state(&app);
+    let effort = effort.unwrap_or_else(|| "auto".to_string());
 
     let routes: Vec<(RouterModel, String, Option<String>)> = if let Some(pin) = pinned {
         let (provider, model) = pin
@@ -365,6 +389,7 @@ pub async fn run(
             cand,
             &messages,
             reasoning,
+            &effort,
             &cancel,
             base,
             key.clone(),
