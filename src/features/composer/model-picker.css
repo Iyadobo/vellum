@@ -52,10 +52,20 @@
   border-radius: var(--radius-lg);
 }
 
+.mp-row-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
 .mp-name {
   font-size: 13.5px;
   font-weight: var(--font-weight-medium);
   color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .mp-chips {

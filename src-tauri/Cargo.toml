@@ -1,6 +1,6 @@
 [package]
 name = "vellum"
-version = "0.1.1"
+version = "0.1.2"
 description = "Vellum — local coding agent desktop frontend"
 authors = ["Iyad"]
 license = ""

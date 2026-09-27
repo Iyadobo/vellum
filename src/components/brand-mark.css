@@ -1,0 +1,15 @@
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  flex-shrink: 0;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.brand-mark-fallback {
+  background: color-mix(in srgb, var(--color-text) 10%, transparent);
+  color: color-mix(in srgb, var(--color-text) 55%, transparent);
+  border: var(--border-width-hairline) solid color-mix(in srgb, var(--color-text) 16%, transparent);
+}

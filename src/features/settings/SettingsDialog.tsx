@@ -7,6 +7,8 @@ import {
   type ReactNode,
 } from "react";
 import { Icon, type IconName } from "../../components/Icon";
+import { BrandMark } from "../../components/BrandMark";
+import { brandForProvider } from "../../lib/brand";
 import { formatRelative } from "../../lib/format";
 import { probeProvider } from "../../lib/router";
 import { useActions, useApp } from "../../lib/store";
@@ -563,6 +565,7 @@ function ProvidersPane() {
           return (
             <div className="settings-provider" key={provider.id}>
               <div className="settings-provider-head">
+                <BrandMark brand={brandForProvider(provider.id)} size={18} />
                 <span className="settings-provider-label">{provider.label}</span>
                 <span className="settings-provider-kind">{provider.kind === "keyless" ? "keyless" : "api key"}</span>
                 <span className="settings-provider-status" data-ok={status ? status.ok : undefined}>

@@ -1,0 +1,60 @@
+import { BRAND_ICONS, type BrandKey } from "./brand-icons";
+
+export interface BrandSpec {
+  key: string;
+  title: string;
+  hex: string;
+  fg: string;
+  path?: string;
+  letter?: string;
+}
+
+const MODEL_MATCHERS: { brand: BrandKey; test: RegExp }[] = [
+  { brand: "anthropic", test: /claude|anthropic|fable/ },
+  { brand: "openai", test: /openai|gpt|codex|davinci|whisper|dall/ },
+  { brand: "google", test: /gemini|gemma|google|palm/ },
+  { brand: "qwen", test: /qwen/ },
+  { brand: "deepseek", test: /deepseek/ },
+  { brand: "moonshot", test: /kimi|moonshot/ },
+  { brand: "meta", test: /llama|meta/ },
+  { brand: "mistral", test: /mistral|mixtral|pixtral|codestral|devstral/ },
+  { brand: "xai", test: /grok|xai/ },
+  { brand: "nvidia", test: /nemotron|nvidia/ },
+  { brand: "microsoft", test: /phi\d|phi-|microsoft/ },
+  { brand: "minimax", test: /minimax/ },
+  { brand: "bytedance", test: /seed|doubao|bytedance/ },
+  { brand: "alibaba", test: /alibaba|tongyi|wan-/ },
+];
+
+const PROVIDER_MATCHERS: { brand: BrandKey; test: RegExp }[] = [
+  { brand: "google", test: /google/ },
+  { brand: "openrouter", test: /openrouter/ },
+];
+
+function specFromKey(key: BrandKey): BrandSpec {
+  const icon = BRAND_ICONS[key];
+  return { key, title: icon.title, hex: icon.hex, fg: icon.fg, path: icon.path };
+}
+
+export function brandForProvider(providerId: string): BrandSpec | null {
+  const id = providerId.toLowerCase();
+  for (const matcher of PROVIDER_MATCHERS) {
+    if (matcher.test.test(id)) return specFromKey(matcher.brand);
+  }
+  return null;
+}
+
+export function brandForModel(modelId: string): BrandSpec | null {
+  const id = modelId.toLowerCase();
+  if (id.indexOf("vellum") !== -1) {
+    return { key: "vellum", title: "Vellum", hex: "#161616", fg: "#f2f2f2", letter: "V" };
+  }
+  if (/(^|[/-])jev/.test(id)) {
+    return { key: "jev", title: "Jev", hex: "#3b3b3b", fg: "#f2f2f2", letter: "J" };
+  }
+  const model = id.includes("/") ? id.split("/").slice(1).join("/") : id;
+  for (const matcher of MODEL_MATCHERS) {
+    if (matcher.test.test(model)) return specFromKey(matcher.brand);
+  }
+  return null;
+}

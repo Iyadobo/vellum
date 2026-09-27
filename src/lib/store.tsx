@@ -114,7 +114,7 @@ function initState(): VellumState {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const data = JSON.parse(raw) as LoadedPersisted;
-      if (data && Array.isArray(data.threads) && data.threads.length > 0) {
+      if (data && Array.isArray(data.threads)) {
         const threads = data.threads.map((t) => ({
           ...t,
           running: false,

@@ -2,8 +2,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useActions, useApp } from "../../lib/store";
 import { contextLabel, paramsLabel } from "../../lib/router";
 import { harnessAvailable } from "../../lib/harness";
+import { brandForModel, brandForProvider } from "../../lib/brand";
 import type { RouterModel } from "../../lib/types";
 import { Icon } from "../../components/Icon";
+import { BrandMark } from "../../components/BrandMark";
 import "./model-picker.css";
 
 const MAX_PER_PROVIDER = 40;
@@ -133,6 +135,7 @@ export function ModelPicker({ current, onSelect }: { current: string; onSelect: 
           setOpen((value) => !value);
         }}
       >
+        <BrandMark brand={brandForModel(current)} size={13} />
         <span className="composer-chip-label">{displayName}</span>
         <Icon name="chevron-down" size={12} className="composer-chip-chevron" />
       </button>
@@ -157,7 +160,10 @@ export function ModelPicker({ current, onSelect }: { current: string; onSelect: 
                   setOpen(false);
                 }}
               >
-                <span className="mp-name">Vellum 5</span>
+                <span className="mp-row-head">
+                  <BrandMark brand={brandForModel("vellum-5")} size={16} />
+                  <span className="mp-name">Vellum 5</span>
+                </span>
                 <span className="mp-chips">
                   <span className="mp-chip" data-tone="on">
                     <Icon name="sparkles" size={11} />
@@ -178,7 +184,10 @@ export function ModelPicker({ current, onSelect }: { current: string; onSelect: 
                   setOpen(false);
                 }}
               >
-                <span className="mp-name">Codex · local CLI</span>
+                <span className="mp-row-head">
+                  <BrandMark brand={brandForModel("codex-local")} size={16} />
+                  <span className="mp-name">Codex · local CLI</span>
+                </span>
                 <span className="mp-chips">
                   <span className="mp-chip" data-tone="on">
                     <Icon name="terminal" size={11} />
@@ -200,6 +209,7 @@ export function ModelPicker({ current, onSelect }: { current: string; onSelect: 
             {groups.map((group) => (
               <div key={group.id} className="mp-group">
                 <div className="mp-group-head">
+                  <BrandMark brand={brandForProvider(group.id)} size={13} />
                   <span className="mp-group-label">{group.label}</span>
                   <span className="mp-group-status" data-ok={group.status ? group.status.ok : undefined}>
                     {group.status
@@ -233,7 +243,10 @@ export function ModelPicker({ current, onSelect }: { current: string; onSelect: 
                       setOpen(false);
                     }}
                   >
-                    <span className="mp-name">{model.model}</span>
+                    <span className="mp-row-head">
+                      <BrandMark brand={brandForModel(model.model)} size={16} />
+                      <span className="mp-name">{model.model}</span>
+                    </span>
                     {modelChips(model)}
                   </button>
                 ))}
