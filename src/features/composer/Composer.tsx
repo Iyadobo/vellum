@@ -1,5 +1,6 @@
 import {
   useEffect,
+  useMemo,
   useRef,
   useState,
   type ChangeEvent,
@@ -9,9 +10,11 @@ import {
 } from "react";
 import { Icon } from "../../components/Icon";
 import { useActions, useApp } from "../../lib/store";
+import { type Command } from "../../lib/commands";
 import { type Effort, type PermissionMode, type RunMode } from "../../lib/types";
 import { ModelPicker } from "./ModelPicker";
 import { EffortPicker } from "./EffortPicker";
+import { SlashBuffer, matchSlashCommands, slashToken } from "./SlashBuffer";
 import { useMenu, type MenuAnchor, type MenuItem } from "../menus/menus";
 import "./composer.css";
 
@@ -85,9 +88,32 @@ function ComposerSurface({ threadId }: { threadId: string }): JSX.Element {
   const [draftSettings, setDraftSettings] = useState<ComposerSettings | null>(null);
   const pendingDraftSettings = useRef<ComposerSettings | null>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const [slashDismissed, setSlashDismissed] = useState(false);
+  const [slashIndex, setSlashIndex] = useState(0);
   const thread = state.threads.find((item) => item.id === threadId) ?? (state.draft?.id === threadId ? state.draft : null);
   const isDraft = state.draft?.id === threadId;
   const running = !!thread?.running;
+
+  const slashQuery = slashToken(value);
+  const slashMatches = useMemo(() => (slashQuery === null ? [] : matchSlashCommands(slashQuery)), [slashQuery]);
+  const slashActive = slashQuery !== null && !slashDismissed;
+  const slashOpen = slashActive && slashMatches.length > 0;
+
+  useEffect(() => {
+    if (!value.startsWith("/")) setSlashDismissed(false);
+  }, [value]);
+
+  useEffect(() => {
+    setSlashIndex((current) => Math.min(current, Math.max(0, slashMatches.length - 1)));
+  }, [slashMatches.length]);
+
+  const runSlashCommand = (command: Command) => {
+    command.run({ actions, state });
+    setValue("");
+    setSlashIndex(0);
+    setSlashDismissed(false);
+    inputRef.current?.focus();
+  };
 
   useEffect(() => {
     const pending = pendingDraftSettings.current;
@@ -133,6 +159,34 @@ function ComposerSurface({ threadId }: { threadId: string }): JSX.Element {
   };
 
   const onInputKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (slashOpen) {
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        setSlashIndex((current) => Math.min(current + 1, slashMatches.length - 1));
+        return;
+      }
+      if (event.key === "ArrowUp") {
+        event.preventDefault();
+        setSlashIndex((current) => Math.max(current - 1, 0));
+        return;
+      }
+      if (event.key === "Tab") {
+        event.preventDefault();
+        setValue(`/${slashMatches[Math.min(slashIndex, slashMatches.length - 1)].id}`);
+        return;
+      }
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setSlashDismissed(true);
+        return;
+      }
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        const command = slashMatches[Math.min(slashIndex, slashMatches.length - 1)];
+        if (command) runSlashCommand(command);
+        return;
+      }
+    }
     if (event.key !== "Enter" || event.nativeEvent.isComposing) return;
     const modifier = event.metaKey || event.ctrlKey;
     if (state.settings.sendShortcut === "enter") {
@@ -211,6 +265,15 @@ function ComposerSurface({ threadId }: { threadId: string }): JSX.Element {
 
   return (
     <div className="composer">
+      {slashActive ? (
+        <SlashBuffer
+          anchor={inputRef.current}
+          matches={slashMatches}
+          selected={Math.min(slashIndex, Math.max(0, slashMatches.length - 1))}
+          onSelected={setSlashIndex}
+          onExecute={runSlashCommand}
+        />
+      ) : null}
       {thread.queued.length > 0 && (
         <div className="composer-queue" aria-label="Queued messages">
           {thread.queued.map((queued) => (
@@ -225,8 +288,11 @@ function ComposerSurface({ threadId }: { threadId: string }): JSX.Element {
         ref={inputRef}
         className="composer-input"
         aria-label="Message Vellum"
+        aria-expanded={slashActive}
+        aria-controls={slashActive ? "slash-panel" : undefined}
+        aria-activedescendant={slashOpen ? `slash-row-${Math.min(slashIndex, slashMatches.length - 1)}` : undefined}
         rows={1}
-        placeholder={running ? "Working…" : "Ask Vellum to do anything"}
+        placeholder={running ? "Working…" : "Ask anything — or type / for commands"}
         value={value}
         onChange={onChange}
         onKeyDown={onInputKeyDown}
