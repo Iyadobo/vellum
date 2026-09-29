@@ -1,6 +1,7 @@
 import { useActions, useApp } from "../lib/store";
 import { useMenu } from "../features/menus/menus";
 import { Icon, type IconName } from "../components/Icon";
+import { APP_VERSION } from "../lib/version";
 import "./Rail.css";
 
 interface RailItem {
@@ -28,18 +29,6 @@ export function Rail() {
       icon: "history",
       label: "History",
       onClick: () => actions.openCommandMenu(),
-    },
-    {
-      id: "plugins",
-      icon: "columns",
-      label: "Plugins",
-      onClick: () => actions.openSettings("plugins"),
-    },
-    {
-      id: "library",
-      icon: "cards",
-      label: "Library",
-      onClick: () => actions.openSettings("skills"),
     },
     {
       id: "agents",
@@ -80,7 +69,7 @@ export function Rail() {
               { id: "shortcuts", label: "Keyboard shortcuts", shortcut: "Ctrl+/", onSelect: () => actions.openSettings("shortcuts") },
               { id: "sep1", label: "", separatorBefore: true },
               { id: "theme", label: "Toggle light / dark", onSelect: () => actions.updateSettings({ theme: state.settings.theme === "dark" ? "vellum" : "dark" }) },
-              { id: "about", label: "About Vellum", onSelect: () => actions.pushToast("Vellum 1.0.0 — a local frontend build") },
+              { id: "about", label: "About Vellum", onSelect: () => actions.pushToast(`Vellum ${APP_VERSION} — a local frontend build`) },
             ],
           });
         }}

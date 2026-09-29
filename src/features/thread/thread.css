@@ -17,9 +17,8 @@
   align-items: center;
   gap: 8px;
   padding: 0 12px;
-  border-bottom: var(--border-width-hairline) solid var(--color-border);
-  background: color-mix(in srgb, var(--color-surface-tertiary) 88%, transparent);
-  backdrop-filter: blur(12px);
+  border-bottom: var(--hairline) solid var(--color-border);
+  background: var(--color-surface-tertiary);
 }
 
 .thread-header-title {
@@ -71,6 +70,54 @@
   display: flex;
   flex-direction: column;
   gap: 28px;
+}
+
+.thread-day {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: -6px 0 -10px;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: var(--tracking-smallcaps);
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+  user-select: none;
+}
+
+.thread-day::before,
+.thread-day::after {
+  content: "";
+  flex: 1;
+  height: var(--hairline);
+  background: var(--color-border-subtle);
+}
+
+.thread-jump {
+  position: sticky;
+  bottom: 104px;
+  align-self: flex-end;
+  z-index: 25;
+  width: 32px;
+  height: 32px;
+  margin: -44px 4px 0 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-elevated);
+  border: 1px solid color-mix(in srgb, var(--color-text) 26%, transparent);
+  box-shadow: var(--shadow-xl-spread);
+  color: var(--color-text-secondary);
+  transition:
+    color var(--transition-duration-basic) var(--ease-out),
+    border-color var(--transition-duration-basic) var(--ease-out);
+}
+
+.thread-jump:hover {
+  color: var(--color-text);
+  border-color: color-mix(in srgb, var(--color-text) 42%, transparent);
 }
 
 .thread-msg-user {

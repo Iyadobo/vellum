@@ -118,7 +118,7 @@ function initState(): VellumState {
         const threads = data.threads.map((t) => ({
           ...t,
           running: false,
-          queued: t.queued ?? [],
+          queued: [],
           messages: (t.messages ?? []).map((m) => ({
             ...m,
             streaming: false,
@@ -444,12 +444,47 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const stateRef = useRef(state);
   stateRef.current = state;
   const runsRef = useRef(new Map<string, RunHandle>());
+  const pendingAppendsRef = useRef(
+    new Map<string, { threadId: string; messageId: string; blockId: string; chunk: string }>(),
+  );
+  const appendTimerRef = useRef<number | null>(null);
+  const persistRef = useRef<(() => void) | null>(null);
+  const quotaToastedRef = useRef(false);
 
   const actions = useMemo<Actions>(() => {
+    const flushAppends = () => {
+      if (appendTimerRef.current !== null) {
+        window.clearTimeout(appendTimerRef.current);
+        appendTimerRef.current = null;
+      }
+      if (pendingAppendsRef.current.size === 0) return;
+      const entries = [...pendingAppendsRef.current.values()];
+      pendingAppendsRef.current.clear();
+      for (const entry of entries) {
+        dispatch({
+          type: "engine",
+          event: { type: "text-append", threadId: entry.threadId, messageId: entry.messageId, blockId: entry.blockId, chunk: entry.chunk },
+        });
+      }
+    };
+
     const bridge: EngineBridge = {
-      dispatchEvent: (event) => dispatch({ type: "engine", event }),
+      dispatchEvent: (event) => {
+        if (event.type === "text-append") {
+          const existing = pendingAppendsRef.current.get(event.blockId);
+          if (existing) existing.chunk += event.chunk;
+          else pendingAppendsRef.current.set(event.blockId, { ...event });
+          if (appendTimerRef.current === null) {
+            appendTimerRef.current = window.setTimeout(flushAppends, 90);
+          }
+          return;
+        }
+        flushAppends();
+        dispatch({ type: "engine", event });
+      },
       peekQueue: (threadId) => stateRef.current.threads.find((t) => t.id === threadId)?.queued[0] ?? null,
       runFinished: (threadId) => {
+        flushAppends();
         runsRef.current.delete(threadId);
         dispatch({ type: "run-finished", threadId });
       },
@@ -554,19 +589,42 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    const payload = {
-      threads: state.threads,
-      settings: state.settings,
-      layout: state.layout,
-      panel: state.panel,
-      activeThreadId: state.activeThreadId,
+    const persist = () => {
+      const current = stateRef.current;
+      const payload = {
+        threads: current.threads,
+        settings: current.settings,
+        layout: current.layout,
+        panel: current.panel,
+        activeThreadId: current.activeThreadId,
+      };
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      } catch {
+        if (!quotaToastedRef.current) {
+          quotaToastedRef.current = true;
+          dispatch({
+            type: "toast-add",
+            id: uid("toast"),
+            text: "Local storage is full — new chats will not be saved. Delete or archive old chats.",
+          });
+        }
+      }
     };
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-    } catch {
-      void 0;
+    persistRef.current = persist;
+    const streaming = state.threads.some((t) => t.running);
+    if (streaming) {
+      const timer = window.setTimeout(persist, 500);
+      return () => window.clearTimeout(timer);
     }
+    persist();
   }, [state.threads, state.settings, state.layout, state.panel, state.activeThreadId]);
+
+  useEffect(() => {
+    const flush = () => persistRef.current?.();
+    window.addEventListener("pagehide", flush);
+    return () => window.removeEventListener("pagehide", flush);
+  }, []);
 
   useEffect(() => {
     const root = document.documentElement;

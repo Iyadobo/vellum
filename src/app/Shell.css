@@ -34,7 +34,8 @@
   flex-direction: column;
   flex: 1;
   min-width: 0;
-  border-left: var(--border-width-hairline) solid var(--color-border);
+  background: var(--color-surface);
+  border-left: var(--hairline) solid var(--color-border-strong);
   position: relative;
 }
 
@@ -42,7 +43,8 @@
   display: flex;
   min-width: 0;
   flex-shrink: 0;
-  border-left: var(--border-width-hairline) solid var(--color-border);
+  background: var(--color-surface-elevated);
+  border-left: var(--hairline) solid var(--color-border-strong);
 }
 
 .shell-resize-handle {

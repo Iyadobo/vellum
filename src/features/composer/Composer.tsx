@@ -25,25 +25,29 @@ const MODE_LABELS: Record<RunMode, string> = {
   cloud: "Cloud",
 };
 
-const PERMISSION_OPTIONS: { mode: PermissionMode; label: string; description: string }[] = [
+const PERMISSION_OPTIONS: { mode: PermissionMode; label: string; short: string; description: string }[] = [
   {
     mode: "ask",
     label: "Ask for approval",
+    short: "Ask",
     description: "Always ask to edit external files and use the internet",
   },
   {
     mode: "approve",
     label: "Approve for me",
+    short: "Approve",
     description: "Only ask for actions detected as potentially unsafe",
   },
   {
     mode: "full",
     label: "Full access",
+    short: "Full",
     description: "Unrestricted access to the internet and any file on your computer",
   },
   {
     mode: "custom",
     label: "Custom",
+    short: "Custom",
     description: "Uses permissions defined in config.toml",
   },
 ];
@@ -244,6 +248,7 @@ function ComposerSurface({ threadId }: { threadId: string }): JSX.Element {
           <button
             type="button"
             className="composer-chip focus-ring"
+            data-kind="mode"
             aria-haspopup="menu"
             aria-label={`Run mode: ${MODE_LABELS[settings.mode]}`}
             onClick={openModeMenu}
@@ -254,12 +259,13 @@ function ComposerSurface({ threadId }: { threadId: string }): JSX.Element {
           <button
             type="button"
             className="composer-chip focus-ring"
+            data-kind="permissions"
             aria-haspopup="menu"
             aria-label={`Permissions: ${permissionOption(settings.permissions).label}`}
             onClick={openPermissionsMenu}
           >
             <Icon name="shield" size={14} className="composer-chip-icon" />
-            <span className="composer-chip-label">{permissionOption(settings.permissions).label}</span>
+            <span className="composer-chip-label">{permissionOption(settings.permissions).short}</span>
             <Icon name="chevron-down" size={12} className="composer-chip-chevron" />
           </button>
         </div>

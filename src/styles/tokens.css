@@ -83,7 +83,7 @@
   --spacing: 0.25rem;
 
   --text-xs: 12px;
-  --text-sm: 13px;
+  --text-sm: 14px;
   --text-base: 14px;
   --text-lg: 16px;
   --text-xl: 28px;
@@ -192,7 +192,7 @@
   --codex-chat-code-font-size: 13px;
 
   --scrollbar-color: var(--alpha-30);
-  --sidebar-background: color-mix(in oklab, var(--color-text) 7%, var(--gray-0));
+  --sidebar-background: color-mix(in oklab, var(--color-text) 10%, var(--gray-0));
   --max-app-overlay-z-index: 2147480000;
 
   --cubic-enter: cubic-bezier(0.19, 1, 0.22, 1);
@@ -237,7 +237,8 @@
 /* ---------- palette ---------- */
 
 :root[data-theme="dark"],
-:root[data-theme="vellum"] {
+:root[data-theme="vellum"],
+:root[data-theme="bw"] {
   color-scheme: dark;
   --theme-variant: dark;
 
@@ -793,6 +794,8 @@
   --font-brand: Georgia, "Times New Roman", serif;
   --font-display: Georgia, "Times New Roman", serif;
   --font-editorial: Georgia, "Times New Roman", serif;
+
+  --blue-200: #f2f2f2;
 
   --gray-0: #000000;
   --gray-25: #050505;

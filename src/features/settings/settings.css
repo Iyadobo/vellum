@@ -145,7 +145,7 @@
 }
 
 .settings-provider-kind {
-  font-size: 10px;
+  font-size: 10.5px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   padding: 1px 6px;
@@ -552,14 +552,14 @@
 
 .settings-nav-label {
   font-family: var(--font-display);
-  font-size: 10.5px;
+  font-size: 11px;
   letter-spacing: var(--tracking-smallcaps);
   text-transform: uppercase;
   color: color-mix(in srgb, var(--color-text) 58%, transparent);
 }
 
 .settings-nav-item {
-  font-size: 13.5px;
+  font-size: 14px;
   color: color-mix(in srgb, var(--color-text) 84%, transparent);
 }
 
@@ -582,7 +582,7 @@
 
 .settings-row-desc {
   margin-top: 2px;
-  font-size: 12.5px;
+  font-size: 14px;
   line-height: 1.45;
   color: var(--color-text-secondary);
 }
@@ -594,7 +594,7 @@
   border: 1px solid color-mix(in srgb, var(--color-text) 26%, transparent);
   background: color-mix(in srgb, var(--color-text) 7%, var(--gray-0));
   padding: 0 12px;
-  font-size: 13.5px;
+  font-size: 14px;
   color: var(--color-text);
 }
 
@@ -623,7 +623,7 @@
 }
 
 .settings-provider-status {
-  font-size: 12.5px;
+  font-size: 13.5px;
   color: color-mix(in srgb, var(--color-text) 62%, transparent);
 }
 
@@ -636,7 +636,7 @@
 }
 
 .settings-provider-note {
-  font-size: 12px;
+  font-size: 13px;
   color: color-mix(in srgb, var(--color-text) 62%, transparent);
 }
 

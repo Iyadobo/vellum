@@ -1,4 +1,4 @@
-import { Fragment, useMemo } from "react";
+import { Fragment, memo, useMemo } from "react";
 import { Icon } from "../../components/Icon";
 import { useActions } from "../../lib/store";
 import { highlight, type TokenKind } from "./highlight";
@@ -15,7 +15,7 @@ const KIND_CLASS: Record<TokenKind, string> = {
   name: "thread-syn-name",
 };
 
-export function CodeBlock({ language, code, path }: { language: string; code: string; path?: string }) {
+export const CodeBlock = memo(function CodeBlock({ language, code, path }: { language: string; code: string; path?: string }) {
   const actions = useActions();
   const tokens = useMemo(() => highlight(code, language), [code, language]);
 
@@ -48,4 +48,4 @@ export function CodeBlock({ language, code, path }: { language: string; code: st
       </pre>
     </div>
   );
-}
+});

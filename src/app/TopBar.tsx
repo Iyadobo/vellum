@@ -3,6 +3,7 @@ import { useMenu, type MenuItem } from "../features/menus/menus";
 import { Icon } from "../components/Icon";
 import { WindowControls } from "./WindowControls";
 import { checkForUpdates } from "../lib/updater";
+import { APP_VERSION } from "../lib/version";
 import "./TopBar.css";
 
 export function buildFileMenu(state: VellumState, actions: ReturnType<typeof useActions>): MenuItem[] {
@@ -90,7 +91,7 @@ export function buildHelpMenu(state: VellumState, actions: ReturnType<typeof use
       },
     },
     { id: "shortcuts", label: "Keyboard shortcuts", shortcut: "Ctrl+/", onSelect: () => actions.openSettings("shortcuts") },
-    { id: "whats-new", label: "What's new", onSelect: () => actions.pushToast("You are on build 0.1.0") },
+    { id: "whats-new", label: "What's new", onSelect: () => actions.pushToast(`You are on build ${APP_VERSION}`) },
   ];
 }
 

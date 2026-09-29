@@ -1,4 +1,4 @@
-import { Fragment, useMemo, type ReactNode } from "react";
+import { Fragment, memo, useMemo, type ReactNode } from "react";
 import { CodeBlock } from "./CodeBlock";
 
 interface MdListItem {
@@ -188,7 +188,7 @@ function renderBlock(block: MdBlock, trailing?: ReactNode): ReactNode {
   return renderList(block);
 }
 
-export function Markdown({ markdown, trailing }: { markdown: string; trailing?: ReactNode }) {
+export const Markdown = memo(function Markdown({ markdown, trailing }: { markdown: string; trailing?: ReactNode }) {
   const blocks = useMemo(() => parseMarkdown(markdown), [markdown]);
   const lastIndex = blocks.length - 1;
   return (
@@ -199,4 +199,4 @@ export function Markdown({ markdown, trailing }: { markdown: string; trailing?: 
       {blocks.length === 0 && trailing ? <p className="thread-md-paragraph">{trailing}</p> : null}
     </div>
   );
-}
+});

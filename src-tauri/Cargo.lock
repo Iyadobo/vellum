@@ -4394,7 +4394,7 @@ dependencies = [
 
 [[package]]
 name = "vellum"
-version = "0.1.2"
+version = "0.1.4"
 dependencies = [
  "futures-util",
  "log",

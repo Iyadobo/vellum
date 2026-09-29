@@ -1,5 +1,6 @@
 import {
   Fragment,
+  memo,
   useEffect,
   useLayoutEffect,
   useRef,
@@ -35,7 +36,7 @@ function useNow(active: boolean): number {
   return now;
 }
 
-function ToolRow({ block }: { block: ToolBlock }) {
+const ToolRow = memo(function ToolRow({ block }: { block: ToolBlock }) {
   return (
     <div className="thread-tool" data-tone={block.tone ?? "default"}>
       <span className="thread-tool-icon">
@@ -45,9 +46,9 @@ function ToolRow({ block }: { block: ToolBlock }) {
       {block.detail ? <span className="thread-tool-detail">{block.detail}</span> : null}
     </div>
   );
-}
+});
 
-function StatusRow({ block }: { block: StatusBlock }) {
+const StatusRow = memo(function StatusRow({ block }: { block: StatusBlock }) {
   return (
     <div className="thread-status" data-tone={block.tone ?? "default"}>
       <span className="thread-tool-icon">
@@ -56,11 +57,11 @@ function StatusRow({ block }: { block: StatusBlock }) {
       <span className="thread-status-label">{block.label}</span>
     </div>
   );
-}
+});
 
 type ReasoningBlockType = Extract<Block, { kind: "reasoning" }>;
 
-function ReasoningBlock({ block }: { block: ReasoningBlockType; live?: boolean }) {
+const ReasoningBlock = memo(function ReasoningBlock({ block }: { block: ReasoningBlockType; live?: boolean }) {
   const [open, setOpen] = useState(false);
 
   const words = block.markdown.trim() ? block.markdown.trim().split(/\s+/).length : 0;
@@ -82,9 +83,9 @@ function ReasoningBlock({ block }: { block: ReasoningBlockType; live?: boolean }
       {open ? <div className="thread-reasoning-body selectable">{block.markdown}</div> : null}
     </div>
   );
-}
+});
 
-function TurnBlockView({ block }: { block: TurnBlock }) {
+const TurnBlockView = memo(function TurnBlockView({ block }: { block: TurnBlock }) {
   const streaming = Boolean(block.streaming);
   const [open, setOpen] = useState(streaming);
   const userToggled = useRef(false);
@@ -123,7 +124,7 @@ function TurnBlockView({ block }: { block: TurnBlock }) {
       ) : null}
     </div>
   );
-}
+});
 
 function BlockView({ block, trailing, live }: { block: Block; trailing?: ReactNode; live?: boolean }) {
   switch (block.kind) {
@@ -153,7 +154,7 @@ function BlockView({ block, trailing, live }: { block: Block; trailing?: ReactNo
   }
 }
 
-function UserMessage({ message }: { message: Message }) {
+const UserMessage = memo(function UserMessage({ message }: { message: Message }) {
   const text = message.blocks
     .map((block) => (block.kind === "text" ? block.markdown : ""))
     .join("\n")
@@ -163,9 +164,9 @@ function UserMessage({ message }: { message: Message }) {
       <div className="thread-user-bubble selectable">{text}</div>
     </div>
   );
-}
+});
 
-function AssistantMessage({ message }: { message: Message }) {
+const AssistantMessage = memo(function AssistantMessage({ message }: { message: Message }) {
   const streaming = Boolean(message.streaming);
   const lastIndex = message.blocks.length - 1;
   const lastIsText = streaming && lastIndex >= 0 && message.blocks[lastIndex].kind === "text";
@@ -184,7 +185,7 @@ function AssistantMessage({ message }: { message: Message }) {
       ) : null}
     </div>
   );
-}
+});
 
 function EmptyState(): JSX.Element {
   return (
@@ -192,6 +193,19 @@ function EmptyState(): JSX.Element {
       <HomeGreeting />
     </div>
   );
+}
+
+function startOfDay(ts: number): number {
+  const d = new Date(ts);
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+}
+
+function dayLabel(ts: number): string {
+  const diff = Math.round((startOfDay(Date.now()) - startOfDay(ts)) / 86400000);
+  if (diff <= 0) return "Today";
+  if (diff === 1) return "Yesterday";
+  if (diff < 7) return new Date(ts).toLocaleDateString(undefined, { weekday: "long" });
+  return new Date(ts).toLocaleDateString(undefined, { month: "long", day: "numeric" });
 }
 
 export function ThreadView(): JSX.Element {
@@ -204,9 +218,13 @@ export function ThreadView(): JSX.Element {
   const scrollRef = useRef<HTMLDivElement>(null);
   const pinnedRef = useRef(true);
   const lastHeightRef = useRef(0);
+  const [atBottom, setAtBottom] = useState(true);
+  const atBottomRef = useRef(true);
 
   useLayoutEffect(() => {
     pinnedRef.current = true;
+    atBottomRef.current = true;
+    setAtBottom(true);
     const element = scrollRef.current;
     if (element) {
       element.scrollTop = element.scrollHeight;
@@ -220,7 +238,13 @@ export function ThreadView(): JSX.Element {
     const distanceBeforeUpdate = lastHeightRef.current - element.scrollTop - element.clientHeight;
     lastHeightRef.current = element.scrollHeight;
     if (distanceBeforeUpdate > 120) pinnedRef.current = false;
-    if (!pinnedRef.current) return;
+    if (!pinnedRef.current) {
+      if (atBottomRef.current) {
+        atBottomRef.current = false;
+        setAtBottom(false);
+      }
+      return;
+    }
     element.scrollTop = element.scrollHeight;
   }, [messages]);
 
@@ -229,7 +253,21 @@ export function ThreadView(): JSX.Element {
   const onScroll = () => {
     const element = scrollRef.current;
     if (!element) return;
-    pinnedRef.current = element.scrollHeight - element.scrollTop - element.clientHeight <= 120;
+    const value = element.scrollHeight - element.scrollTop - element.clientHeight <= 120;
+    pinnedRef.current = value;
+    if (atBottomRef.current !== value) {
+      atBottomRef.current = value;
+      setAtBottom(value);
+    }
+  };
+
+  const jumpToLatest = () => {
+    const element = scrollRef.current;
+    if (!element) return;
+    pinnedRef.current = true;
+    atBottomRef.current = true;
+    setAtBottom(true);
+    element.scrollTo({ top: element.scrollHeight, behavior: state.settings.reduceMotion ? "auto" : "smooth" });
   };
 
   const reviewVisible = state.panel.open && actions.getPanelKind("review");
@@ -302,11 +340,33 @@ export function ThreadView(): JSX.Element {
         </div>
       </header>
       <div className="thread-body">
-        {messages.map((message) => (
-          <Fragment key={message.id}>
-            {message.role === "user" ? <UserMessage message={message} /> : <AssistantMessage message={message} />}
-          </Fragment>
-        ))}
+        {messages.map((message, index) => {
+          const prev = messages[index - 1];
+          const divider =
+            prev && startOfDay(prev.createdAt) !== startOfDay(message.createdAt)
+              ? dayLabel(message.createdAt)
+              : null;
+          return (
+            <Fragment key={message.id}>
+              {divider ? (
+                <div className="thread-day" role="separator" aria-label={divider}>
+                  {divider}
+                </div>
+              ) : null}
+              {message.role === "user" ? <UserMessage message={message} /> : <AssistantMessage message={message} />}
+            </Fragment>
+          );
+        })}
+        {!atBottom && (
+          <button
+            type="button"
+            className="thread-jump focus-ring"
+            aria-label="Jump to latest"
+            onClick={jumpToLatest}
+          >
+            <Icon name="chevron-down" size={16} />
+          </button>
+        )}
       </div>
     </div>
   );
